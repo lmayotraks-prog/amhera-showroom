@@ -89,8 +89,8 @@ export default function Experience({ scrollProgress, mousePos, isLowEnd }) {
       {/* Environment map de estudio — refleja en el cromo del objeto */}
       <Environment preset="studio" />
 
-      {/* Partículas cromadas — scroll-driven */}
-      <ChromeParticles count={isLowEnd ? 1500 : 4000} scrollProgress={scrollProgress} />
+      {/* Partículas cromadas — scroll-driven, cantidad reducida para perf */}
+      <ChromeParticles count={isLowEnd ? 800 : 2500} scrollProgress={scrollProgress} />
 
       {/* Grupo con parallax de cursor */}
       <group ref={groupRef}>
@@ -120,7 +120,7 @@ export default function Experience({ scrollProgress, mousePos, isLowEnd }) {
         />
         <ChromaticAberration
           blendFunction={BlendFunction.NORMAL}
-          offset={[0.0008, 0.0008]}
+          offset={[0.0004, 0.0004]}
         />
         <Vignette
           offset={0.35}

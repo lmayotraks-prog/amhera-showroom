@@ -4,30 +4,56 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger'
 
 gsap.registerPlugin(ScrollTrigger)
 
+// ─────────────────────────────────────────────────────────────────────────────
+// Hero — Luxury minimal.
+// Solo el nombre masivo "AMHERA" como backdrop tipográfico.
+// El logo 3D flota en primer plano (canvas fijo).
+// Al scrollear: el texto se ALEJA (scale down + opacity 0) = efecto zoom-out luxury.
+// ─────────────────────────────────────────────────────────────────────────────
 export default function Hero() {
-  const sectionRef = useRef()
+  const sectionRef  = useRef()
+  const titleRef    = useRef()
+  const taglineRef  = useRef()
 
   useEffect(() => {
     const ctx = gsap.context(() => {
-      // Entrada cinematográfica escalonada
-      const tl = gsap.timeline({ delay: 0.5 })
-      tl.to('.hero__eyebrow', { opacity: 1, y: 0, duration: 1.0, ease: 'power3.out' })
-        .to('.hero__title',   { opacity: 1, y: 0, duration: 1.4, ease: 'power4.out' }, '-=0.6')
-        .to('.hero__tagline', { opacity: 1, duration: 1.0, ease: 'power2.out' }, '-=0.8')
-        .to('.hero__ctas',    { opacity: 1, y: 0, duration: 0.9, ease: 'power3.out' }, '-=0.7')
-        .to('.hero__scroll',  { opacity: 1, duration: 0.8 }, '-=0.4')
+      // ── Entrada inmediata (más rápida, más luxury) ──────────────────────
+      const tl = gsap.timeline({ delay: 0.15 })
+      tl.from(titleRef.current, {
+          opacity: 0,
+          scale: 1.08,
+          duration: 0.9,
+          ease: 'power3.out',
+        })
+        .from(taglineRef.current, {
+          opacity: 0,
+          y: 12,
+          duration: 0.6,
+          ease: 'power2.out',
+        }, '-=0.5')
 
-      // Al hacer scroll, el hero desaparece elegantemente hacia arriba
-      gsap.to('.hero__eyebrow, .hero__title, .hero__tagline, .hero__ctas', {
+      // ── Scroll: el texto se aleja → efecto "zoom back" luxury ──────────
+      // (inverso al clásico: en vez de subir, se achica y desvanece)
+      gsap.to(titleRef.current, {
         scrollTrigger: {
           trigger: sectionRef.current,
           start: 'top top',
-          end: '60% top',
-          scrub: 1.5,
+          end: '50% top',
+          scrub: 1.0,
         },
-        y: -100,
+        scale: 0.88,
         opacity: 0,
-        stagger: 0.05,
+        ease: 'none',
+      })
+      gsap.to(taglineRef.current, {
+        scrollTrigger: {
+          trigger: sectionRef.current,
+          start: 'top top',
+          end: '35% top',
+          scrub: 0.8,
+        },
+        opacity: 0,
+        ease: 'none',
       })
     }, sectionRef)
 
@@ -35,24 +61,18 @@ export default function Hero() {
   }, [])
 
   return (
-    <section className="section hero" ref={sectionRef} style={{ minHeight: '100vh' }}>
-      <p className="hero__eyebrow">Metal Líquido · Moda del Futuro</p>
-      <h1 className="hero__title">AMHERA</h1>
-      <p className="hero__tagline">Haute Couture of the Future</p>
+    <section
+      className="section hero"
+      ref={sectionRef}
+      style={{ minHeight: '100vh', pointerEvents: 'none' }}
+    >
+      {/* Nombre masivo — referencia imagen 2: texto enorme de fondo */}
+      <h1 ref={titleRef} className="hero__name-bg">AMHERA</h1>
 
-      <div className="hero__ctas">
-        <a href="#collection" className="cta-primary">
-          <span>Descubrir Colección</span>
-        </a>
-        <a href="#vision" className="cta-ghost">
-          <span>Ver Manifiesto</span>
-        </a>
-      </div>
-
-      <div className="hero__scroll">
-        <span>Scroll</span>
-        <div className="scroll-line" />
-      </div>
+      {/* Tagline mínimo — solo letras pequeñas debajo */}
+      <p ref={taglineRef} className="hero__tagline-only">
+        Haute Couture of the Future
+      </p>
     </section>
   )
 }

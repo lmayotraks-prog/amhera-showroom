@@ -178,130 +178,53 @@ body {
   padding: 0 6vw;
 }
 
-/* ── HERO ───────────────────────────────────────────────────────────────── */
+/* ── HERO — Luxury Backdrop ──────────────────────────────────────────────── */
 .hero {
   flex-direction: column;
+  align-items: center;
+  justify-content: center;
   text-align: center;
   position: relative;
+  overflow: hidden;
 }
 
-.hero__eyebrow {
-  font-family: var(--font-body);
-  font-size: 0.65rem;
-  font-weight: 400;
-  letter-spacing: 0.5em;
-  text-transform: uppercase;
-  color: var(--chrome-dim);
-  opacity: 0;
-  transform: translateY(20px);
-  margin-bottom: 2.5rem;
-}
-
-.hero__title {
+/* Nombre masivo de marca — backdrop tipográfico luxury */
+/* El 3D canvas (fixed) flota encima de esto */
+.hero__name-bg {
   font-family: var(--font-display);
-  font-size: clamp(3.5rem, 10vw, 9rem);
+  font-size: clamp(5rem, 18vw, 16rem);
   font-weight: 800;
-  line-height: 0.9;
-  letter-spacing: -0.02em;
-  background: linear-gradient(160deg, var(--white) 20%, var(--chrome) 55%, var(--chrome-dim) 100%);
+  line-height: 0.88;
+  letter-spacing: -0.03em;
+  /* Cromo con transparencia — el 3D se ve a través */
+  background: linear-gradient(
+    170deg,
+    rgba(255,255,255,0.82) 0%,
+    rgba(192,192,200,0.55) 40%,
+    rgba(120,120,130,0.28) 80%,
+    rgba(30,30,35,0.12) 100%
+  );
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-  opacity: 0;
-  transform: translateY(50px);
+  /* Sombra de texto sutil para profundidad */
+  filter: drop-shadow(0 0 40px rgba(180,180,200,0.15));
+  will-change: opacity, transform;
+  user-select: none;
+  pointer-events: none;
 }
 
-.hero__tagline {
-  font-family: var(--font-display);
-  font-size: clamp(0.5rem, 1vw, 0.7rem);
-  font-weight: 400;
-  letter-spacing: 0.6em;
-  text-transform: uppercase;
-  color: var(--chrome-dim);
-  margin-top: 2.5rem;
-  opacity: 0;
-}
-
-.hero__ctas {
-  display: flex;
-  gap: 1.5rem;
-  margin-top: 3.5rem;
-  opacity: 0;
-  transform: translateY(20px);
-}
-
-/* Side CTAs estilo AMHERA original */
-.cta-primary, .cta-ghost {
-  position: relative;
-  padding: 0.85rem 2.2rem;
-  font-family: var(--font-display);
-  font-size: 0.65rem;
-  letter-spacing: 0.3em;
-  text-transform: uppercase;
-  text-decoration: none;
-  overflow: hidden;
-  border-radius: 2px;
-  transition: color 0.4s cubic-bezier(0.76, 0, 0.24, 1);
-  cursor: none;
-}
-
-.cta-primary {
-  border: 1px solid rgba(255,255,255,0.5);
-  color: var(--white);
-}
-
-.cta-primary::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: var(--white);
-  transform: scaleX(0);
-  transform-origin: left;
-  transition: transform 0.4s cubic-bezier(0.76, 0, 0.24, 1);
-  z-index: 0;
-}
-
-.cta-primary:hover::before { transform: scaleX(1); }
-.cta-primary:hover { color: var(--bg); }
-.cta-primary span { position: relative; z-index: 1; }
-
-.cta-ghost {
-  border: 1px solid var(--border);
-  color: var(--muted);
-}
-
-.cta-ghost:hover { color: var(--chrome-bright); border-color: rgba(255,255,255,0.3); }
-
-.hero__scroll {
-  position: absolute;
-  bottom: 2.5rem;
-  left: 50%;
-  transform: translateX(-50%);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.6rem;
-  opacity: 0;
-}
-
-.hero__scroll span {
-  font-size: 0.55rem;
-  letter-spacing: 0.4em;
-  text-transform: uppercase;
-  color: var(--chrome-dim);
+/* Tagline ultra-mínimo */
+.hero__tagline-only {
   font-family: var(--font-body);
-}
-
-.scroll-line {
-  width: 1px;
-  height: 50px;
-  background: linear-gradient(to bottom, var(--chrome-dim), transparent);
-  animation: scrollPulse 2.5s ease-in-out infinite;
-}
-
-@keyframes scrollPulse {
-  0%, 100% { opacity: 0.3; transform: scaleY(1); }
-  50%       { opacity: 1;   transform: scaleY(0.5); }
+  font-size: 0.58rem;
+  font-weight: 400;
+  letter-spacing: 0.55em;
+  text-transform: uppercase;
+  color: rgba(192,192,200,0.35);
+  margin-top: 2rem;
+  will-change: opacity;
+  pointer-events: none;
 }
 
 /* ── VISION (About) ─────────────────────────────────────────────────────── */
@@ -430,54 +353,65 @@ body {
   border: 1px solid var(--border);
   border-radius: 4px;
   overflow: hidden;
-  opacity: 0;
-  transform: translateY(60px);
   transition: border-color 0.4s, box-shadow 0.4s;
+  will-change: transform;
 }
 
 .piece-card:hover {
-  border-color: rgba(192,192,200,0.25);
-  box-shadow: 0 0 30px var(--glow-chrome), 0 20px 40px rgba(0,0,0,0.6);
+  border-color: rgba(192,192,200,0.22);
+  box-shadow: 0 0 30px var(--glow-chrome), 0 20px 40px rgba(0,0,0,0.5);
 }
 
-.piece-card__img {
+/* ── Placeholder de producto — limpio, luxury ───────────────────────── */
+.piece-card__placeholder {
   width: 100%;
   height: 360px;
-  object-fit: cover;
-  display: block;
-  filter: grayscale(0.2) contrast(1.1);
-  transition: filter 0.5s, transform 0.6s;
-}
-
-.piece-card:hover .piece-card__img {
-  filter: grayscale(0) contrast(1.15);
-  transform: scale(1.03);
-}
-
-.piece-card__img-wrap {
-  overflow: hidden;
-  position: relative;
-}
-
-.piece-card__overlay {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(to top, rgba(3,3,3,0.8) 0%, transparent 50%);
-  opacity: 0;
-  transition: opacity 0.4s;
   display: flex;
-  align-items: flex-end;
-  padding: 1.5rem;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  background: rgba(255,255,255,0.015);
+  position: relative;
+  overflow: hidden;
 }
 
-.piece-card:hover .piece-card__overlay { opacity: 1; }
+/* Esquinas decorativas en el placeholder */
+.piece-card__placeholder::before,
+.piece-card__placeholder::after {
+  content: '';
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  border-color: rgba(192,192,200,0.2);
+  border-style: solid;
+}
 
-.piece-card__view {
+.piece-card__placeholder::before {
+  top: 12px; left: 12px;
+  border-width: 1px 0 0 1px;
+}
+
+.piece-card__placeholder::after {
+  bottom: 12px; right: 12px;
+  border-width: 0 1px 1px 0;
+}
+
+.piece-card__num {
   font-family: var(--font-display);
-  font-size: 0.6rem;
-  letter-spacing: 0.35em;
+  font-size: 3.5rem;
+  font-weight: 800;
+  color: rgba(192,192,200,0.06);
+  letter-spacing: -0.02em;
+  line-height: 1;
+}
+
+.piece-card__coming {
+  font-family: var(--font-body);
+  font-size: 0.58rem;
+  letter-spacing: 0.4em;
   text-transform: uppercase;
-  color: var(--chrome-bright);
+  color: rgba(192,192,200,0.25);
 }
 
 .piece-card__info {

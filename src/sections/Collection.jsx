@@ -4,24 +4,22 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger'
 
 gsap.registerPlugin(ScrollTrigger)
 
+// Productos reales de la marca — sin imágenes por ahora (placeholder con cromado)
 const PIECES = [
   {
     name: 'GRAVITY COAT',
     tag: 'Outerwear · Modular',
-    filter: 'grayscale(0.15) contrast(1.1)',
-    desc: 'Una segunda piel de precisión. Capas que se adaptan, se quitan y se añaden.',
+    num: '01',
   },
   {
     name: 'CHROME EXOSKELETON',
     tag: 'Accessories · 3D Printed',
-    filter: 'grayscale(0.5) contrast(1.25) brightness(0.9)',
-    desc: 'Accesorios modulares de metal líquido. Impresos en 3D. Diseñados para el cuerpo.',
+    num: '02',
   },
   {
     name: 'ETHEREAL HARNESS',
     tag: 'Techwear · Core',
-    filter: 'grayscale(0.3) hue-rotate(200deg) brightness(0.75)',
-    desc: 'El arnes que redefine la silueta. Donde la arquitectura se convierte en moda.',
+    num: '03',
   },
 ]
 
@@ -30,21 +28,17 @@ export default function Collection() {
 
   useEffect(() => {
     const ctx = gsap.context(() => {
-      gsap.to('.collection__label', {
-        scrollTrigger: { trigger: sectionRef.current, start: 'top 72%' },
-        opacity: 1, y: 0, duration: 0.8, ease: 'power3.out',
+      gsap.from('.collection__label', {
+        scrollTrigger: { trigger: sectionRef.current, start: 'top 75%' },
+        opacity: 0, y: 15, duration: 0.7, ease: 'power3.out',
       })
-      gsap.to('.collection__title', {
-        scrollTrigger: { trigger: sectionRef.current, start: 'top 68%' },
-        opacity: 1, y: 0, duration: 1.1, ease: 'power4.out', delay: 0.1,
+      gsap.from('.collection__title', {
+        scrollTrigger: { trigger: sectionRef.current, start: 'top 70%' },
+        opacity: 0, y: 30, duration: 0.9, ease: 'power4.out', delay: 0.1,
       })
-      gsap.to('.collection__sub', {
-        scrollTrigger: { trigger: sectionRef.current, start: 'top 64%' },
-        opacity: 1, duration: 0.8, delay: 0.2,
-      })
-      gsap.to('.piece-card', {
-        scrollTrigger: { trigger: '.collection__grid', start: 'top 75%' },
-        opacity: 1, y: 0, duration: 1.0, ease: 'power3.out', stagger: 0.2,
+      gsap.from('.piece-card', {
+        scrollTrigger: { trigger: '.collection__grid', start: 'top 78%' },
+        opacity: 0, y: 50, duration: 0.9, ease: 'power3.out', stagger: 0.15,
       })
     }, sectionRef)
 
@@ -62,16 +56,10 @@ export default function Collection() {
       <div className="collection__grid">
         {PIECES.map((piece) => (
           <div className="piece-card" key={piece.name}>
-            <div className="piece-card__img-wrap">
-              <img
-                src="/assets/hero.png"
-                alt={piece.name}
-                className="piece-card__img"
-                style={{ filter: piece.filter }}
-              />
-              <div className="piece-card__overlay">
-                <span className="piece-card__view">Ver Pieza →</span>
-              </div>
+            {/* Placeholder — próximamente foto del producto real */}
+            <div className="piece-card__placeholder">
+              <span className="piece-card__num">{piece.num}</span>
+              <p className="piece-card__coming">Próximamente</p>
             </div>
             <div className="piece-card__info">
               <h3 className="piece-card__name">{piece.name}</h3>

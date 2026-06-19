@@ -7,28 +7,21 @@ export default function Loader({ onComplete }) {
   const overlayRef  = useRef()
   const barRef      = useRef()
   const percentRef  = useRef()
-  const brandRef    = useRef()
   const hasExited   = useRef(false)
 
   useEffect(() => {
-    if (barRef.current)    barRef.current.style.width    = `${progress}%`
+    if (barRef.current)    barRef.current.style.width     = `${progress}%`
     if (percentRef.current) percentRef.current.textContent = `${Math.round(progress)}%`
   }, [progress])
 
-  useEffect(() => {
-    if (!brandRef.current) return
-    gsap.from(brandRef.current, { opacity: 0, y: 40, duration: 1, ease: 'power3.out', delay: 0.3 })
-  }, [])
-
   const exitLoader = () => {
-    if (hasExited.current) return
+    if (hasExited.current || !overlayRef.current) return
     hasExited.current = true
     gsap.to(overlayRef.current, {
-      scaleY: 0,
-      transformOrigin: 'top center',
-      duration: 1.2,
-      ease: 'power4.inOut',
-      delay: 0.4,
+      opacity: 0,
+      duration: 0.5,
+      ease: 'power2.inOut',
+      delay: 0.1,
       onComplete,
     })
   }
@@ -37,19 +30,17 @@ export default function Loader({ onComplete }) {
     if (!active && progress >= 99) exitLoader()
   }, [active, progress])
 
-  // Fallback — 4s máximo de espera
+  // Fallback — máximo 2s (antes 4s)
   useEffect(() => {
-    const t = setTimeout(exitLoader, 4000)
+    const t = setTimeout(exitLoader, 2000)
     return () => clearTimeout(t)
   }, [])
 
   return (
     <div ref={overlayRef} className="loader-overlay">
       <div className="loader-inner">
-        <div ref={brandRef}>
-          <div className="loader-brand">AMHERA</div>
-          <div className="loader-sub">Haute Couture of the Future</div>
-        </div>
+        <div className="loader-brand">AMHERA</div>
+        <div className="loader-sub">Haute Couture of the Future</div>
 
         <div className="loader-track">
           <div ref={barRef} className="loader-fill" />
@@ -58,7 +49,6 @@ export default function Loader({ onComplete }) {
         <span ref={percentRef} className="loader-percent">0%</span>
       </div>
 
-      {/* Esquinas decorativas */}
       <div className="loader-corner loader-corner--tl" />
       <div className="loader-corner loader-corner--tr" />
       <div className="loader-corner loader-corner--bl" />
