@@ -1,19 +1,21 @@
+// Experience.jsx — refactorizado
+//
+// Punto de montaje de toda la escena 3D AMHERA.
+// Cambios:
+// 1. getActs(scrollProgress) centralizado — fuente única de verdad.
+// 2. lerp -> dampLerp con delta — independiente del framerate.
+// 3. Mantiene TODO lo visual del commit d50f898: cámara, parallax mouse,
+//    Environment, partículas, suelo espejo, Bloom, ChromaticAberration, Vignette.
+
 import { useRef } from 'react'
 import { useFrame, useThree } from '@react-three/fiber'
 import { Environment } from '@react-three/drei'
 import { EffectComposer, Bloom, ChromaticAberration, Vignette } from '@react-three/postprocessing'
 import { BlendFunction } from 'postprocessing'
-import * as THREE from 'three'
+import { getActs, dampLerp } from './useActs'
 import ChromeParticles from './ChromeParticles'
 import ChromeRings from './ChromeRings'
 import CoreObject from './CoreObject'
-
-// mapRange: mismo patrón en todos los componentes
-function mapRange(value, start, end) {
-  if (value <= start) return 0
-  if (value >= end) return 1
-  return (value - start) / (end - start)
-}
 
 export default function Experience({ scrollProgress, mousePos, isLowEnd }) {
   const { camera } = useThree()
@@ -23,56 +25,40 @@ export default function Experience({ scrollProgress, mousePos, isLowEnd }) {
   const lightReformRef  = useRef()
 
   useFrame((state, delta) => {
-    const p = scrollProgress?.current ?? 0
-
-    // ── Los 4 Actos de AMHERA ────────────────────────────────────────────
-    // Acto I:  Hero       (0% → 25%)  → cromo frío, cámara frontal
-    // Acto II: Visión     (25% → 55%) → fragmentación, caos cromado
-    // Acto III:Collection (55% → 85%) → ensamblaje, claridad dorada
-    // Acto IV: Access     (85% → 100%)→ zoom extremo, luz pura
-    const disperseT = mapRange(p, 0.25, 0.55)
-    const reformT   = mapRange(p, 0.55, 0.85)
-    const ctaT      = mapRange(p, 0.85, 1.0)
+    const { disperseT, reformT, ctaT } = getActs(scrollProgress)
 
     // ── Parallax de cursor sobre el grupo 3D ─────────────────────────────
     if (groupRef.current && mousePos) {
       const targetX = mousePos.current.y *  0.06
       const targetY = mousePos.current.x *  0.06
-      groupRef.current.rotation.x = THREE.MathUtils.lerp(groupRef.current.rotation.x, targetX, 0.04)
-      groupRef.current.rotation.y = THREE.MathUtils.lerp(groupRef.current.rotation.y, targetY, 0.04)
+      groupRef.current.rotation.x = dampLerp(groupRef.current.rotation.x, targetX, 4, delta)
+      groupRef.current.rotation.y = dampLerp(groupRef.current.rotation.y, targetY, 4, delta)
     }
 
     // ── Movimiento de cámara ──────────────────────────────────────────────
-    // Acto I:   frontal, distante, majestuoso
-    // Acto II:  orbita lateralmente (caos / desorientación)
-    // Acto III: vuelve al eje frontal (orden)
-    // Acto IV:  zoom dramático extremo
     const angle      = disperseT * Math.PI * 0.35 - reformT * Math.PI * 0.2
     const radius     = 5.0 - disperseT * 0.5 + reformT * 0.3
     const targetCamX = Math.sin(angle) * radius * 0.5
     const targetCamY = 1.5 - disperseT * 1.0 + reformT * 0.6
     const targetCamZ = Math.cos(angle) * radius - ctaT * 2.8
 
-    camera.position.x = THREE.MathUtils.lerp(camera.position.x, targetCamX, 0.035)
-    camera.position.y = THREE.MathUtils.lerp(camera.position.y, targetCamY, 0.035)
-    camera.position.z = THREE.MathUtils.lerp(camera.position.z, targetCamZ, 0.035)
+    camera.position.x = dampLerp(camera.position.x, targetCamX, 3.5, delta)
+    camera.position.y = dampLerp(camera.position.y, targetCamY, 3.5, delta)
+    camera.position.z = dampLerp(camera.position.z, targetCamZ, 3.5, delta)
     camera.lookAt(0, 0, 0)
 
     // ── Iluminación dinámica por acto ─────────────────────────────────────
-    // Luz principal (blanca/plateada): siempre activa, varía intensidad
     if (lightMainRef.current) {
-      const intensity = 2.0 + ctaT * 6.0
-      lightMainRef.current.intensity = THREE.MathUtils.lerp(lightMainRef.current.intensity, intensity, 0.05)
+      const intensity = 2.0 + ctaT * 3.0
+      lightMainRef.current.intensity = dampLerp(lightMainRef.current.intensity, intensity, 5, delta)
     }
-    // Luz de caos (violeta): sube en Acto II
     if (lightChaosRef.current) {
       const intensity = disperseT * 12 * (1 - reformT)
-      lightChaosRef.current.intensity = THREE.MathUtils.lerp(lightChaosRef.current.intensity, intensity, 0.05)
+      lightChaosRef.current.intensity = dampLerp(lightChaosRef.current.intensity, intensity, 5, delta)
     }
-    // Luz de ensamblaje (dorada): sube en Acto III
     if (lightReformRef.current) {
       const intensity = reformT * 10 - ctaT * 5
-      lightReformRef.current.intensity = THREE.MathUtils.lerp(lightReformRef.current.intensity, Math.max(0, intensity), 0.05)
+      lightReformRef.current.intensity = dampLerp(lightReformRef.current.intensity, Math.max(0, intensity), 5, delta)
     }
   })
 

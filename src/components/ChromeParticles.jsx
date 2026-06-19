@@ -1,13 +1,14 @@
+// ChromeParticles.jsx — refactorizado
+//
+// Cambios: usa getActs para timing centralizado.
+// Nota: dampLerp NO se aplica aquí porque las partículas actualizan posición
+// directamente (sin interpolación), lo cual es correcto para este caso —
+// la interpolación es el propio cálculo de spread/collapse.
+
 import { useRef, useMemo } from 'react'
 import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
-
-// mapRange: mini-progreso por tramo de sección
-function mapRange(value, start, end) {
-  if (value <= start) return 0
-  if (value >= end) return 1
-  return (value - start) / (end - start)
-}
+import { getActs } from './useActs'
 
 export default function ChromeParticles({ count = 4000, scrollProgress }) {
   const mesh = useRef()
@@ -55,13 +56,7 @@ export default function ChromeParticles({ count = 4000, scrollProgress }) {
   useFrame((state) => {
     if (!mesh.current || !scrollProgress) return
 
-    const p = scrollProgress.current
-    // Acto II: Fragmentación (About 25%→55%) — partículas se dispersan
-    const disperseT = mapRange(p, 0.25, 0.55)
-    // Acto III: Ensamblaje (Collection 55%→85%) — vuelven al origen
-    const reformT   = mapRange(p, 0.55, 0.85)
-    // Acto IV: Acceso (CTA 85%→100%) — colapso total al centro
-    const ctaT      = mapRange(p, 0.85, 1.0)
+    const { disperseT, reformT, ctaT } = getActs(scrollProgress)
 
     const dispersionAmount = disperseT * (1 - reformT * 0.95)
     const collapseAmount   = ctaT * 0.8
